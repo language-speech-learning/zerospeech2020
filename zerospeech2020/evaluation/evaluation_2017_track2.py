@@ -76,11 +76,12 @@ def _evaluate_single(submission, language, log, njobs):
         raise ValueError(f'file not found: {class_file}')
     disc = _read_discovered(class_file, language, gold, log)
 
-    ned, coverage, details = _evaluate_lang(gold, disc, log, njobs)
+    ned, norm_ned, coverage, details = _evaluate_lang(gold, disc, log, njobs)
 
     return {
         'scores': {
             'ned': ned,
+            'norm_ned': norm_ned,
             'coverage': coverage,
             'words': details['words']},
         'details': details}
@@ -172,6 +173,7 @@ def _evaluate_lang(gold, disc, log, njobs):
     ned = Ned(disc)
     ned.compute_ned()
     details['ned'] = ned.ned
+    details['norm_ned'] = ned.norm_ned
     details['pairs'] = ned.n_pairs
 
-    return ned.ned, coverage.coverage, details
+    return ned.ned, ned.norm_ned, coverage.coverage, details
